@@ -4,19 +4,19 @@ import React from "react";
 import Switch from "@mui/material/Switch";
 import { useState } from "react";
 import { makeStyles } from "@material-ui/styles";
-// const label = { inputProps: { "aria-label": "Swich demo" } };
-
+import { useEffect } from "react";
 const Item = makeStyles({
   root: {
     backgroundColor: "#F0E68C",
     border: "1px solid",
-    // borderColor: theme.palette.mode === "dark" ? "#444d58" : "#ced7e0",
-    // padding: theme.spacing(5),
+    width: "33%",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    userSelect: "none",
     borderRadius: "3px",
-    textAlign: "center",
-    height: "110px",
+    height: "120px",
     fontSize: "50px",
-    paddingTop: "15px",
   },
 });
 
@@ -34,30 +34,135 @@ const TicTacToe = () => {
       "2,2": null,
     },
     gameStarted: false,
-    gameEnded: false,
     winner: "none",
   });
-  const atama = (e) => {
-    const value = checked ? "X" : "O";
+  const [checked, setChecked] = useState(true);
+  const handleChange = (event) => {
+    if (game.gameStarted === false) {
+      setChecked(event.target.checked);
+    }
+  };
+  const [firstStart, setFirstStart] = useState(true);
+  const startChange = (event) => {
+    if (game.gameStarted === false) {
+      setFirstStart(event.target.checked);
+    }
+  };
+  const [turn, setTurn] = useState(null);
+
+  useEffect(() => {
+    setTurn(firstStart);
+  }, [firstStart]);
+
+  const o = Object.fromEntries(
+    Object.entries(game.board).filter(([_, v]) => v === null)
+  );
+  const atama = (id) => {
+    if (!game.gameStarted || game.board[id]) return null;
+    if (turn === true) {
+      const value = checked ? "X" : "O";
+      setGame((prevState) => ({
+        ...prevState,
+        board: {
+          ...prevState.board,
+          [id]: value,
+        },
+      }));
+    }
+    setTurn(false);
+  };
+
+  if (
+    turn === false &&
+    game.gameStarted === true &&
+    Object.values(game.board).some((valu) => valu === null) === true
+  ) {
+    const l = Object.keys(o)[Math.floor(Math.random() * Object.keys(o).length)];
+
+    const value = checked ? "O" : "X";
     setGame((prevState) => ({
       ...prevState,
       board: {
         ...prevState.board,
-        [e.target.id]: value,
+        [l]: value,
       },
     }));
-  };
-  const onclick = game.gameStarted == null ? (e) => atama(e) : undefined;
-  console.log(game.board);
 
-  const [checked, setChecked] = useState(true);
-  const handleChange = (event) => {
-    setChecked(event.target.checked);
-  };
-  const [firstStart, setFirstStart] = useState(true);
-  const startChange = (event) => {
-    setFirstStart(event.target.checked);
-  };
+    setTurn(true);
+  }
+  function gameEnded() {
+    window.location.reload();
+  }
+  console.log(game.gameStarted);
+  if (
+    game.board["0,0"] === game.board["0,1"] &&
+    game.board["0,0"] != null &&
+    game.board["0,0"] === game.board["0,2"]
+  ) {
+    game.gameStarted = false;
+    game.winner = game.board["0,0"] === "X" ? "X" : "O";
+  } else if (
+    game.board["1,0"] === game.board["1,1"] &&
+    game.board["1,0"] != null &&
+    game.board["1,0"] === game.board["1,2"]
+  ) {
+    game.gameStarted = false;
+    game.winner = game.board["1,0"] === "X" ? "X" : "O";
+  } else if (
+    game.board["2,0"] === game.board["2,1"] &&
+    game.board["2,0"] != null &&
+    game.board["2,0"] === game.board["2,2"]
+  ) {
+    game.gameStarted = false;
+    game.winner = game.board["2,0"] === "X" ? "X" : "O";
+  }
+  //columnda kazanma durumları
+  else if (
+    game.board["0,0"] === game.board["1,0"] &&
+    game.board["0,0"] != null &&
+    game.board["0,0"] === game.board["2,0"]
+  ) {
+    game.gameStarted = false;
+    game.winner = game.board["0,0"] === "X" ? "X" : "O";
+  } else if (
+    game.board["0,1"] === game.board["1,1"] &&
+    game.board["0,1"] != null &&
+    game.board["0,1"] === game.board["2,1"]
+  ) {
+    game.gameStarted = false;
+    game.winner = game.board["0,1"] === "X" ? "X" : "O";
+  } else if (
+    game.board["0,2"] === game.board["1,2"] &&
+    game.board["0,2"] != null &&
+    game.board["0,2"] === game.board["2,2"]
+  ) {
+    game.gameStarted = false;
+    game.winner = game.board["0,2"] === "X" ? "X" : "O";
+  }
+  //çapraz kazanma durumları
+  else if (
+    game.board["0,0"] === game.board["1,1"] &&
+    game.board["0,0"] != null &&
+    game.board["0,0"] === game.board["2,2"]
+  ) {
+    game.gameStarted = false;
+    game.winner = game.board["0,0"] === "X" ? "X" : "O";
+  } else if (
+    game.board["0,2"] === game.board["1,1"] &&
+    game.board["0,2"] != null &&
+    game.board["0,2"] === game.board["2,0"]
+  ) {
+    game.gameStarted = false;
+    game.winner = game.board["0,2"] === "X" ? "X" : "O";
+  }
+  //BERABERLİK DURUMU
+  else if (
+    game.winner === "none" &&
+    Object.values(game.board).some((valu) => valu === null) === false
+  ) {
+    game.gameStarted = false;
+    game.winner = "BERABERLİK";
+  }
 
   const classes = Item();
   return (
@@ -66,57 +171,53 @@ const TicTacToe = () => {
         display: "grid",
         marginTop: "40px",
         width: "50%",
-        // height: "20vh",
       }}
     >
       <Grid container sx={{ border: "2px" }}>
-        <Grid className={classes.root} id="0,0" onClick={onclick} item xs={4}>
-          {game.board["0,0"]}
-        </Grid>
-        <Grid className={classes.root} id="0,1" onClick={onclick} item xs={4}>
-          {game.board["0,1"]}
-        </Grid>
-        <Grid className={classes.root} id="0,2" onClick={onclick} item xs={4}>
-          {game.board["0,2"]}
-        </Grid>
-        <Grid className={classes.root} id="1,0" onClick={onclick} item xs={4}>
-          {game.board["1,0"]}
-        </Grid>
-        <Grid className={classes.root} id="1,1" onClick={onclick} item xs={4}>
-          {game.board["1,1"]}
-        </Grid>
-        <Grid className={classes.root} id="1,2" onClick={onclick} item xs={4}>
-          {game.board["1,2"]}
-        </Grid>
-        <Grid className={classes.root} id="2,0" onClick={onclick} item xs={4}>
-          {game.board["2,0"]}
-        </Grid>
-        <Grid className={classes.root} id="2,1" onClick={onclick} item xs={4}>
-          {game.board["2,1"]}
-        </Grid>
-        <Grid className={classes.root} id="2,2" onClick={onclick} item xs={4}>
-          {game.board["2,2"]}
-        </Grid>
+        {Object.keys(game.board).map((id) => (
+          <Grid
+            className={classes.root}
+            id={id}
+            key={id}
+            onClick={() => atama(id)}
+          >
+            {game.board[id]}
+          </Grid>
+        ))}
       </Grid>
       <Grid container sx={{ justifyContent: "center" }}>
         <FormControlLabel
-          control={
-            <Switch
-              checked={checked}
-              onChange={handleChange}
-              inputProps={{ "aria-label": "controlled" }}
-            />
-          }
-          label="X Olacak mısın?"
+          control={<Switch checked={checked} onChange={handleChange} />}
+          label={checked === true ? "X karakterisiniz." : "O karakterisiniz."}
           labelPlacement="start"
         />
       </Grid>
-      <Grid container sx={{ justifyContent: "center " }}>
+      <Grid container sx={{ justifyContent: "center" }}>
         <ButtonGroup>
-          <Button onClick={(event) => setGame({ ...game, gameStarted: true })}>
+          <Button
+            sx={{
+              backgroundColor: "#800000",
+              color: "white",
+              fontSize: "20px",
+
+              "&:hover": {
+                backgroundColor: "#CD5C5C",
+              },
+            }}
+            onClick={(event) => setGame({ ...game, gameStarted: true })}
+          >
             Start Game
           </Button>
-          <Button onClick={(event) => setGame({ ...game, gameEnded: true })}>
+          <Button
+            sx={{
+              backgroundColor: "#191970",
+              color: "white",
+              "&:hover": {
+                backgroundColor: "#7B68EE",
+              },
+            }}
+            onClick={() => gameEnded()}
+          >
             Resign
           </Button>
         </ButtonGroup>
@@ -127,13 +228,29 @@ const TicTacToe = () => {
             <Switch
               checked={firstStart}
               onChange={startChange}
-              inputProps={{ "aria-label": "controlled" }}
               color="primary"
             />
           }
-          label="İlk sen mi başlamak istersin?"
+          label={
+            firstStart === true
+              ? "İlk Siz Başlıyorsunuz."
+              : "İlk Bilgisayar Başlıyor.."
+          }
           labelPlacement="start"
         />
+      </Grid>
+      <Grid sx={{ display: "flex", justifyContent: "center" }}>
+        <h1>
+          {(game.winner === "X" && checked === true) ||
+          (game.winner === "O" && checked === false)
+            ? "SEN KAZANDIN."
+            : (game.winner === "X" && checked === false) ||
+              (game.winner === "O" && checked === true)
+            ? " BİLGİSAYAR KAZANDI"
+            : game.winner === "BERABERLİK"
+            ? "BERABERE BİTTİ."
+            : "HENÜZ KAZANAN YOK..."}
+        </h1>
       </Grid>
     </Container>
   );
