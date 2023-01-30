@@ -32,12 +32,19 @@ const Header = () => {
             disableAutoFocusItem
           >
             <MenuItem onClick={() => setOpen(null)}>
-              <HomeIcon />
-              <Link to="/">HomePage</Link>
+              <Link style={{ color: "black", textDecoration: "none" }} to="/">
+                <HomeIcon />
+                HomePage
+              </Link>
             </MenuItem>
             <MenuItem onClick={() => setOpen(null)}>
-              <SportsEsportsIcon />
-              <Link to="/Tictactoe/index ">TicTacToe</Link>
+              <Link
+                style={{ color: "black", textDecoration: "none" }}
+                to="/Tictactoe/index "
+              >
+                <SportsEsportsIcon />
+                TicTacToe
+              </Link>
             </MenuItem>
           </Menu>
 

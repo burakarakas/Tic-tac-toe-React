@@ -53,6 +53,10 @@ const TicTacToe = () => {
   useEffect(() => {
     setTurn(firstStart);
   }, [firstStart]);
+  useEffect(() => {
+    const arr = Object.entries(game.board).filter(([_, v]) => v !== null);
+    if (arr.length <= 4) return;
+  }, [game.board]);
 
   const o = Object.fromEntries(
     Object.entries(game.board).filter(([_, v]) => v === null)
@@ -71,29 +75,32 @@ const TicTacToe = () => {
     }
     setTurn(false);
   };
+  useEffect(() => {
+    if (
+      turn === false &&
+      game.gameStarted === true &&
+      Object.values(game.board).some((valu) => valu === null) === true
+    ) {
+      const timer = setTimeout(() => {
+        const l =
+          Object.keys(o)[Math.floor(Math.random() * Object.keys(o).length)];
 
-  if (
-    turn === false &&
-    game.gameStarted === true &&
-    Object.values(game.board).some((valu) => valu === null) === true
-  ) {
-    const l = Object.keys(o)[Math.floor(Math.random() * Object.keys(o).length)];
+        const value = checked ? "O" : "X";
+        setGame((prevState) => ({
+          ...prevState,
+          board: {
+            ...prevState.board,
+            [l]: value,
+          },
+        }));
+      }, 1200);
+      setTurn(true);
+    }
+  }, [turn === false, game.gameStarted]);
 
-    const value = checked ? "O" : "X";
-    setGame((prevState) => ({
-      ...prevState,
-      board: {
-        ...prevState.board,
-        [l]: value,
-      },
-    }));
-
-    setTurn(true);
-  }
   function gameEnded() {
     window.location.reload();
   }
-  console.log(game.gameStarted);
   if (
     game.board["0,0"] === game.board["0,1"] &&
     game.board["0,0"] != null &&
