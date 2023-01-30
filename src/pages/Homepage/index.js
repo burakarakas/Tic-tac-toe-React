@@ -29,14 +29,9 @@ const Homepage = () => {
         <Grid item xs={12}>
           <Typography className={classes.centerText}>Hoşgeldiniz</Typography>
         </Grid>
-        <Grid item xs={6}>
+        <Grid item xs={12}>
           <Paper className={classes.paper}>
-            <Typography>Sol</Typography>
-          </Paper>
-        </Grid>
-        <Grid item xs={6}>
-          <Paper className={classes.paper}>
-            <Typography>Sağ</Typography>
+            <Typography></Typography>
           </Paper>
         </Grid>
       </Grid>

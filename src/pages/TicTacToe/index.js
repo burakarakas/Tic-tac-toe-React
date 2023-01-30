@@ -81,7 +81,7 @@ const TicTacToe = () => {
       game.gameStarted === true &&
       Object.values(game.board).some((valu) => valu === null) === true
     ) {
-      const timer = setTimeout(() => {
+      setTimeout(() => {
         const l =
           Object.keys(o)[Math.floor(Math.random() * Object.keys(o).length)];
 
